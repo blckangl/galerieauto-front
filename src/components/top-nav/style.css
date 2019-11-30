@@ -1,0 +1,11 @@
+#top-nav{
+    background: rgba(0, 0, 0, 0.74);
+    color: white;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+}
+a{
+    color: white;
+    text-decoration: none;
+}

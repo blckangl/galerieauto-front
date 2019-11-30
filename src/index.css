@@ -1,13 +1,46 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: 'Kanit' !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+html{
+  font-family: 'Kanit' !important;
 
+}
+body, input, button {
+  font: 16px 'Kanit',sans-serif !important;
+}
+section{
+  font-family: 'Kanit' !important;
+
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 99;
+  height: 73px;
+  transition: height 0.15s ease-out;
+}
+
+.sticky + .content {
+  /*padding-top: 60px;*/
+}
+.content{
+  /*position: absolute;*/
+  /*!* bottom: 50px; *!*/
+  /*left: 0;*/
+  /*right: 0;*/
+  /*top: 40px;*/
+}
+
+.ant-message{
+  z-index: 999999;
+}
+

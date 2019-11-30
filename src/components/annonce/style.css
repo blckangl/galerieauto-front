@@ -1,0 +1,56 @@
+a {
+    text-decoration: none;
+}
+
+.annonce:hover .description-container {
+    height: 210px;
+}
+
+.annonce:hover .show {
+    display: block;
+    opacity: 1;
+}
+
+.annonce .show {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+
+}
+
+.annonce {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+
+}
+
+.price-bubble {
+    width: 130px;
+    background: #c7081b;
+    border-radius: 20px 0px 0px 20px;
+    height: 33px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.price-container {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 32px;
+}
+
+.description-container {
+    background-color: #00000091;
+    color: white;
+
+    transition: height 0.5s ease;
+
+    height: 150px;
+}
