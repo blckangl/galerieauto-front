@@ -6,13 +6,14 @@ import color from '../../assets/color.png'
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import * as CONSTANTS from '../../shared/constants'
 import Fade from 'react-reveal/Fade';
 
 const Announce = props => (
     <div style={{cursor: 'pointer'}}>
-        <a href={`/annonces/annonce?id=${props.id}`}>
+        <a href={`/announce/${props.id}`}>
 
-            <div style={{backgroundImage: `url(${props.img})`}} className="annonce">
+            <div style={{backgroundImage: `url(${CONSTANTS.PUBLIC_UPLOAD_FOLDER_URL+props.img})`}} className="annonce">
                 <div className="price-container">
                     <div className="price-bubble">{props.price} €</div>
                 </div>

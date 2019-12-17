@@ -20,6 +20,8 @@ import {SignUp} from "../../components/sign-up";
 import * as AOS from "aos";
 import {Car, Loisir, Suv, Moto} from '../../assets';
 import {useCookies} from "react-cookie";
+import Select from '@material-ui/core/Select';
+import NativeSelect from '@material-ui/core/NativeSelect';
 
 const {RangePicker} = DatePicker;
 
@@ -57,15 +59,13 @@ export default function Vendeur() {
     }, []);
 
     const [show, setShow] = useState(false);
-const [isDone,setIsDone] = useState(false);
+    const [isDone, setIsDone] = useState(false);
 
     const classes = useStyles();
 
     const [tokenCookie, setTokenCookie, removeTokenCookie] = useCookies(['token']);
-
     const [currentModels, setCurrentModels] = useState([]);
     const [currentMarques, setCurrentMarques] = useState([]);
-
     const [fileList, setList] = useState([]);
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -97,7 +97,7 @@ const [isDone,setIsDone] = useState(false);
     const [nbChv, setNbChv] = useState('');
     const [isnbChvError, setNbhChvError] = useState(false);
 
-    const [carburant, setCarburant] = useState('');
+    const [carburant, setCarburant] = useState({title: 'carburant', value: 'carburant'});
     const [isCarburantError, setCarburantError] = useState(false);
 
     const [selectedColor, setSelectedColor] = useState('');
@@ -106,7 +106,6 @@ const [isDone,setIsDone] = useState(false);
     const [price, setPrice] = useState('');
     const [isPriceError, setPriceError] = useState(false);
 
-    const [transmission, setTransmission] = useState('');
     const [isTransError, setTransError] = useState(false);
 
     const handleClose = () => setShow(true);
@@ -117,15 +116,15 @@ const [isDone,setIsDone] = useState(false);
         if (id == 0) {
             return;
         }
-        fetch(CONSTANTS.API_URL + "marques/read.php?id=" + id)
+        fetch(CONSTANTS.GET_MARQUES + "?typeid=" + id)
             .then(response => {
                 return response.json();
             })
             .then(data => {
 
-                if (data.records) {
+                if (data.success) {
 
-                    setCurrentMarques(data.records);
+                    setCurrentMarques(data.body);
                 } else {
                     setCurrentMarques([]);
 
@@ -141,13 +140,15 @@ const [isDone,setIsDone] = useState(false);
         if (id == 0) {
             return;
         }
-        fetch(CONSTANTS.API_URL + "models/read.php?id=" + id)
+        setSelectedModel({title: '', _id: '0'});
+
+        fetch(CONSTANTS.GET_MODELS + "?marqueid=" + id)
             .then(response => {
                 return response.json();
             })
             .then(data => {
-                if (data.records) {
-                    setCurrentModels(data.records);
+                if (data.success) {
+                    setCurrentModels(data.body);
                 } else {
                     setCurrentModels([]);
                 }
@@ -158,21 +159,33 @@ const [isDone,setIsDone] = useState(false);
             });
     }
 
-    const handlePreview = async file => {
-        console.log("preview");
-        console.log(file);
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
+    const beforeUpload = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+            message.error('You can only upload JPG/PNG file!');
         }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            message.error('Image must smaller than 2MB!');
+        }
+        return isJpgOrPng && isLt2M;
+    }
 
-        setPreviewImage(file.url || file.preview);
-        setPreviewVisible(true);
+    const customprops = {
+        name: 'image',
+        action: `${CONSTANTS.UPLOAD}`,
+        onChange(info) {
+            if (info.file.status !== 'uploading') {
+            }
+            if (info.file.status === 'done') {
+                message.success(`${info.file.name} file uploaded successfully`);
+                setList([...info.fileList]);
+            } else if (info.file.status === 'error') {
+                message.error(`${info.file.name} file upload failed.`);
+            }
+        },
+    };
 
-    };
-    const handleChange = ({fileList}) => {
-        setList(fileList);
-        console.log(fileList)
-    };
     const uploadButton = (
         <div>
             <Icon type="plus"/>
@@ -247,12 +260,8 @@ const [isDone,setIsDone] = useState(false);
             setColorError(true);
             isError = true;
         }
-        if (transmission === '') {
-            message.error('Le champ Transmission est obligatoire');
-            setTransError(true);
-            isError = true;
-        }
-        if (carburant.length < 2) {
+
+        if (carburant.value == "carburant") {
             message.error('Le champ Carburant est obligatoire');
             setCarburantError(true);
             isError = true;
@@ -276,36 +285,39 @@ const [isDone,setIsDone] = useState(false);
 
         let body = {
             token: tokenCookie.token,
-            name: title,
+            title: title,
             description: description,
             color: selectedColor,
             chv: nbChv,
-            carburant: carburant,
+            carburant: carburant.value,
             price: price,
-            circulation_date: dateCirculation[0] + "/" + dateCirculation[1],
-            Transmission: transmission,
+            circulation_date: dateCirculation[0],
             kilo: kilometrage,
-            nb_port: 4,
-            model_id: selectedModel.id,
-            marque_id: selectedMarque.id,
+            model_id: selectedModel._id,
+            marque_id: selectedMarque._id,
             type_id: selectedType,
-            img_cover: CONSTANTS.API_URL + "public/img/" + fileList[0].response.FileName,
+            img_cover: fileList[0]['response'].body.filename,
             contact_phone: phoneNumber
         };
-        console.log(body);
-        fetch(CONSTANTS.API_URL + "vehicles/create.php", {
-            method: "post",
-            body: JSON.stringify(body)
+
+
+        fetch(CONSTANTS.POST_ANNOUNCES, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${tokenCookie.token}`
+            },
+            body: JSON.stringify(body),
         })
             .then(response => {
                 return response.json();
             })
             .then(data => {
-                console.log(data);
-                if(data.success){
+                if (data.success) {
                     message.success("Done ");
                     setIsDone(true);
-                }else{
+                } else {
                     setIsDone(false);
                     message.error(data.message);
                 }
@@ -318,21 +330,23 @@ const [isDone,setIsDone] = useState(false);
     }
     const handleTypeChange = (e) => {
         setSelectedType(e.target.value);
-        console.log(selectedType);
-        fetchMarques(e.target.value);
-        setSelectedModel({name: '', id: -1});
-        setSelectedMarque({name: '', id: -1});
 
+        setSelectedModel({title: '', _id: -1});
+        setSelectedMarque({title: '', _id: -1});
+        fetchMarques(e.target.value);
     }
+
+    const carburantoptions = [{title: 'ESSENCE', value: 'ESSENCE'}, {
+        title: 'DIESEL',
+        value: 'DIESEL'
+    }, {title: 'ELECTRICITY', value: 'ELECTRICITY'}, {title: 'OTHER', value: 'OTHER'}]
     const handleModelChange = (e, value) => {
         setSelectedModel(value);
-
     }
     const handleMarqueChange = (e, value) => {
         setSelectedMarque(value);
-        setSelectedModel({name: '', id: -1});
-        fetchModels(value.id);
-
+        setSelectedModel({title: '', _id: -1});
+        fetchModels(value._id);
     }
     const handleTitleChange = (e) => {
 
@@ -342,15 +356,13 @@ const [isDone,setIsDone] = useState(false);
         setDescription(e.target.value);
     }
     const handleDate1Change = (value, dateString) => {
-        console.log('Selected Time: ', value);
-        console.log('Formatted Selected Time: ', dateString);
+
         setDateCiruclation(dateString);
     }
     const handleDate2Change = (value) => {
-        console.log('Selected Time ok: ', value);
     }
-    const handleCarburantChange = (e) => {
-        setCarburant(e.target.value);
+    const handleCarburantChange = (e, value) => {
+        setCarburant(value);
     }
     const handleNbChvChange = (e) => {
         setNbChv(e.target.value);
@@ -367,324 +379,329 @@ const [isDone,setIsDone] = useState(false);
     const handlePhoneNumberChange = (e) => {
         setPhoneNumber(e.target.value);
     }
-    const handleTransmissionChange = (e) => {
-        console.log(transmission);
-        setTransmission(e.target.value);
-    }
+
     return (
-     <div>
-         {isDone? <Result
-             status="success"
-             title="Success :)"
-             subTitle="Votre annonces est ajoutée"
-             // extra={[
-             //     <Button type="primary" key="console">
-             //         Go Console
-             //     </Button>,
-             //     {/*<Button key="buy">Buy Again</Button>,*/}
-             // ]}
-         />:  <form className={classes.container} noValidate autoComplete="off">
+        <div>
+            {isDone ? <Result
+                status="success"
+                title="Success :)"
+                subTitle="Votre annonces est ajoutée"
+                // extra={[
+                //     <Button type="primary" key="console">
+                //         Go Console
+                //     </Button>,
+                //     {/*<Button key="buy">Buy Again</Button>,*/}
+                // ]}
+            /> : <form className={classes.container} noValidate autoComplete="off">
 
-             <Container>
-                 <Paper className={"p-3"}>
+                <Container>
+                    <Paper className={"p-3"}>
 
-                     <Row className={"pt-3"}>
+                        <Row className={"pt-3"}>
 
-                         <div className="col-6 col-md-3 text-center d-flex justify-content-center">
-                             <label className="radiocontainer">
-                                 <img
-                                     style={{height: 60 + "px"}}
-                                     src={Moto}
-                                 />
-                                 <p>Moto</p>
-                                 <input
-                                     type="radio"
-                                     name="type"
-                                     value="2"
-                                     onChange={handleTypeChange}
-                                 />
-                                 <span className="checkmark"></span>
-                             </label>
-                         </div>
-                         <div className="col-6 col-md-3 text-center d-flex justify-content-center">
-                             <label className="radiocontainer">
-                                 <img style={{height: 60 + "px"}} src={Suv}/>
-                                 <p>Utilitaire</p>
-                                 <input
-                                     type="radio"
-                                     name="type"
-                                     value="3"
-                                     onChange={handleTypeChange}
-                                 />
-                                 <span className="checkmark"></span>
-                             </label>
-                         </div>
-                         <div className="col-6 col-md-3 text-center d-flex justify-content-center">
-                             <label className="radiocontainer">
-                                 <img style={{height: 60 + "px"}} src={Car}/>
-                                 <p>Voiture</p>
-                                 <input
-                                     type="radio"
-                                     name="type"
-                                     value="1"
-                                     onChange={handleTypeChange}
+                            <div className="col-6 col-md-3 text-center d-flex justify-content-center">
+                                <label className="radiocontainer">
+                                    <img
+                                        style={{height: 60 + "px"}}
+                                        src={Moto}
+                                    />
+                                    <p>Moto</p>
+                                    <input
+                                        type="radio"
+                                        name="type"
+                                        value="5de5b2997bb16705d7dd50c3"
+                                        onChange={handleTypeChange}
+                                    />
+                                    <span className="checkmark"></span>
+                                </label>
+                            </div>
+                            <div className="col-6 col-md-3 text-center d-flex justify-content-center">
+                                <label className="radiocontainer">
+                                    <img style={{height: 60 + "px"}} src={Suv}/>
+                                    <p>Utilitaire</p>
+                                    <input
+                                        type="radio"
+                                        name="type"
+                                        value="5de5b28e7bb16705d7dd50c2"
+                                        onChange={handleTypeChange}
+                                    />
+                                    <span className="checkmark"></span>
+                                </label>
+                            </div>
+                            <div className="col-6 col-md-3 text-center d-flex justify-content-center">
+                                <label className="radiocontainer">
+                                    <img style={{height: 60 + "px"}} src={Car}/>
+                                    <p>Voiture</p>
+                                    <input
+                                        type="radio"
+                                        name="type"
+                                        value="5de5b21f7bb16705d7dd50c0"
+                                        onChange={handleTypeChange}
 
-                                 />
-                                 <span className="checkmark"></span>
-                             </label>
-                         </div>
-                         <div className="col-6 col-md-3 text-center d-flex justify-content-center">
-                             <label className="radiocontainer">
-                                 <img
-                                     style={{height: 60 + "px"}}
-                                     src={Loisir}
-                                 />
-                                 <p>Loisir </p>
-                                 <input
-                                     type="radio"
-                                     name="type"
-                                     value="4"
-                                     onChange={handleTypeChange}
-                                 />
-                                 <span className="checkmark"/>
-                             </label>
-                         </div>
+                                    />
+                                    <span className="checkmark"></span>
+                                </label>
+                            </div>
+                            <div className="col-6 col-md-3 text-center d-flex justify-content-center">
+                                <label className="radiocontainer">
+                                    <img
+                                        style={{height: 60 + "px"}}
+                                        src={Loisir}
+                                    />
+                                    <p>Loisir </p>
+                                    <input
+                                        type="radio"
+                                        name="type"
+                                        value="5de5b2727bb16705d7dd50c1"
+                                        onChange={handleTypeChange}
+                                    />
+                                    <span className="checkmark"/>
+                                </label>
+                            </div>
 
-                     </Row>
+                        </Row>
 
-                     <Row className={"pt-3"}>
-                         <Col>
+                        <Row className={"pt-3"}>
+                            <Col>
 
-                             <TextField
-                                 id="titlefield"
-                                 label="Title"
-                                 className={classes.textField}
-                                 margin="normal"
-                                 required
-                                 onChange={handleTitleChange}
-                                 error={isTitleError}
-                             />
+                                <TextField
+                                    id="titlefield"
+                                    label="Title"
+                                    className={classes.textField}
+                                    margin="normal"
+                                    required
+                                    onChange={handleTitleChange}
+                                    error={isTitleError}
+                                />
 
-                         </Col>
+                            </Col>
 
-                     </Row>
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <TextField
-                                 id="descriptionField"
-                                 label="Description"
-                                 className={classes.textField}
-                                 margin="normal"
-                                 required
-                                 multiline
-                                 onChange={handleDescriptionChange}
-                                 error={isDescriptionError}
-                             />
-                         </Col>
-                     </Row>
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <TextField
-                                 id="numfield"
-                                 label="Numéro de contact"
-                                 className={classes.textField}
-                                 margin="normal"
-                                 type="number"
-                                 required
-                                 onChange={handlePhoneNumberChange}
-                                 error={isPhoneError}
-                             />
+                        </Row>
+                        <Row className={"pt-3"}>
+                            <Col>
+                                <TextField
+                                    id="descriptionField"
+                                    label="Description"
+                                    className={classes.textField}
+                                    margin="normal"
+                                    required
+                                    multiline
+                                    onChange={handleDescriptionChange}
+                                    error={isDescriptionError}
+                                />
+                            </Col>
+                        </Row>
+                        <Row className={"pt-3"}>
+                            <Col>
+                                <TextField
+                                    id="numfield"
+                                    label="Numéro de contact"
+                                    className={classes.textField}
+                                    margin="normal"
+                                    type="number"
+                                    required
+                                    onChange={handlePhoneNumberChange}
+                                    error={isPhoneError}
+                                />
 
-                         </Col>
-                     </Row>
-                     <Row className={"pt-3"}>
-                         <Col xs={12}>
-                             <Autocomplete
-                                 id="combo-box-marques"
-                                 options={currentMarques}
-                                 getOptionLabel={option => option.name}
-                                 value={selectedMarque}
-                                 style={{width: '100%'}}
-                                 onChange={handleMarqueChange}
-                                 renderInput={params => (
-                                     <TextField {...params} label="Select Marque" variant="outlined" fullWidth/>
-                                 )}
+                            </Col>
+                        </Row>
+                        <Row className={"pt-3"}>
+                            <Col xs={12}>
+                                <Autocomplete
+                                    id="combo-box-marques"
+                                    options={currentMarques}
+                                    getOptionLabel={option => option.title}
+                                    value={selectedMarque}
+                                    style={{width: '100%'}}
+                                    onChange={handleMarqueChange}
+                                    renderInput={params => (
+                                        <TextField {...params} label="Select Marque" variant="outlined" fullWidth/>
+                                    )}
 
-                             />
-                         </Col>
-                     </Row>
-                     <Row className={"pt-3"}>
-                         <Col xs={12}>
-                             <Autocomplete
-                                 id="combo-box-models"
-                                 options={currentModels}
-                                 getOptionLabel={option => option.name}
-                                 style={{width: '100%'}}
-                                 onChange={handleModelChange}
-                                 value={selectedModel}
-                                 renderInput={params => (
-                                     <TextField {...params} label="Select Model" variant="outlined" fullWidth/>
-                                 )}
+                                />
+                            </Col>
+                        </Row>
+                        <Row className={"pt-3"}>
+                            <Col xs={12}>
+                                <Autocomplete
+                                    id="combo-box-models"
+                                    options={currentModels}
+                                    getOptionLabel={option => option.title}
+                                    style={{width: '100%'}}
+                                    onChange={handleModelChange}
+                                    value={selectedModel}
+                                    renderInput={params => (
+                                        <TextField {...params} label="Select Model" variant="outlined" fullWidth/>
+                                    )}
 
-                             />
-                         </Col>
-                     </Row>
+                                />
+                            </Col>
+                        </Row>
 
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <RangePicker
-                                 style={{width: '100%'}}
-                                 format="YYYY-MM-DD"
-                                 placeholder={['Date de mise en circulation (Début)', 'Date de mise en circulation(Fin)']}
-                                 onChange={handleDate1Change}
-                                 onOk={handleDate2Change}
+                        <Row className={"pt-3"}>
+                            <Col>
+                                <RangePicker
+                                    style={{width: '100%'}}
+                                    format="YYYY-MM-DD"
+                                    placeholder={['Date de mise en circulation (Début)', 'Date de mise en circulation(Fin)']}
+                                    onChange={handleDate1Change}
+                                    onOk={handleDate2Change}
 
-                             />
+                                />
 
-                         </Col>
-                     </Row>
+                            </Col>
+                        </Row>
 
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <TextField
-                                 id="kmfield"
-                                 label="Kilométrage"
-                                 className={classes.textField}
-                                 margin="normal"
-                                 type="number"
-                                 required
-                                 onChange={handleKiloChange}
-                                 error={isKilometrageError}
-                             />
+                        <Row className={"pt-3"}>
+                            <Col>
+                                <TextField
+                                    id="kmfield"
+                                    label="Kilométrage"
+                                    className={classes.textField}
+                                    margin="normal"
+                                    type="number"
+                                    required
+                                    onChange={handleKiloChange}
+                                    error={isKilometrageError}
+                                />
 
-                         </Col>
-                     </Row>
+                            </Col>
+                        </Row>
 
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <TextField
-                                 id="nbcgvfield"
-                                 label="Nombre de cheavaux"
-                                 className={classes.textField}
-                                 margin="normal"
-                                 type="number"
-                                 required
-                                 onChange={handleNbChvChange}
-                                 error={isnbChvError}
-                             />
+                        <Row className={"pt-3"}>
+                            <Col>
+                                <TextField
+                                    id="nbcgvfield"
+                                    label="Nombre de cheavaux"
+                                    className={classes.textField}
+                                    margin="normal"
+                                    type="number"
+                                    required
+                                    onChange={handleNbChvChange}
+                                    error={isnbChvError}
+                                />
 
-                         </Col>
-                     </Row>
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <TextField
-                                 id="nbcgvfield"
-                                 label="Carburant"
-                                 className={classes.textField}
-                                 margin="normal"
-                                 required
-                                 onChange={handleCarburantChange}
-                                 error={isCarburantError}
-                             />
+                            </Col>
+                        </Row>
+                        <Row className={"pt-3"}>
+                            <Col>
 
-                         </Col>
-                     </Row>
+                                <Autocomplete
+                                    id="combo-box-models"
+                                    options={carburantoptions}
+                                    getOptionLabel={option => option.title}
+                                    style={{width: '100%'}}
+                                    onChange={handleCarburantChange}
+                                    value={carburant}
+                                    renderInput={params => (
+                                        <TextField {...params} label="Carburant" variant="outlined" fullWidth/>
+                                    )}
 
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <TextField
-                                 id="transfield"
-                                 label="Transmission"
-                                 className={classes.textField}
-                                 margin="normal"
-                                 required
-                                 onChange={handleTransmissionChange}
-                                 error={isTransError}
-                             />
+                                />
 
-                         </Col>
-                     </Row>
-
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <TextField
-                                 id="colorfield"
-                                 label="Couleur"
-                                 className={classes.textField}
-                                 margin="normal"
-                                 required
-                                 onChange={handleColorChange}
-                                 error={isColorError}
-                             />
-                         </Col>
-                     </Row>
-
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <TextField
-                                 id="prixfiled"
-                                 label="Prix"
-                                 className={classes.textField}
-                                 margin="normal"
-                                 required
-                                 onChange={handlePriceChange}
-                                 error={isPriceError}
-                                 type={"number"}
-                             />
-                         </Col>
-                     </Row>
-
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <div className="clearfix">
-                                 <Upload
-                                     action={`${CONSTANTS.API_URL}upload.php`}
-                                     listType="picture-card"
-                                     fileList={fileList}
-                                     onPreview={handlePreview}
-                                     onChange={handleChange}
-                                     name={"upfile"}
-                                 >
-                                     {fileList.length >= 8 ? null : uploadButton}
-                                 </Upload>
-                                 <Modal visible={previewVisible} footer={null} onCancel={handleCancel}>
-                                     <img alt="example" style={{width: '100%'}} src={previewImage}/>
-                                 </Modal>
-                             </div>
-                         </Col>
-                     </Row>
-
-                     <Row className={"pt-3"}>
-                         <Col>
-                             <Button
-                                 variant="contained"
-                                 color="primary"
-                                 size="large"
-                                 className={classes.button}
-                                 startIcon={<SaveIcon/>}
-                                 onClick={(event) => {
-                                     handleSubmitAnnonce();
-                                 }}
-                             >
-                                 Save
-                             </Button>
-                         </Col>
-                     </Row>
-                 </Paper>
-
-                 <Modal className={"p-0"} show={show} onHide={handleClose}>
-
-                     <Modal.Body>
-                         <SignUp></SignUp>
-                     </Modal.Body>
-
-                 </Modal>
-             </Container>
-
-         </form>}
+                            </Col>
+                        </Row>
 
 
-     </div>
+                        <Row className={"pt-3"}>
+                            <Col>
+                                <TextField
+                                    id="colorfield"
+                                    label="Couleur"
+                                    className={classes.textField}
+                                    margin="normal"
+                                    required
+                                    onChange={handleColorChange}
+                                    error={isColorError}
+                                />
+                            </Col>
+                        </Row>
+
+                        <Row className={"pt-3"}>
+                            <Col>
+                                <TextField
+                                    id="prixfiled"
+                                    label="Prix"
+                                    className={classes.textField}
+                                    margin="normal"
+                                    required
+                                    onChange={handlePriceChange}
+                                    error={isPriceError}
+                                    type={"number"}
+                                />
+                            </Col>
+                        </Row>
+
+                        <Row className={"pt-3"}>
+                            <Col>
+                                <div className="clearfix">
+                                    {/*<Upload*/}
+                                    {/*    action={`${CONSTANTS.UPLOAD}`}*/}
+                                    {/*    listType="picture-card"*/}
+                                    {/*    fileList={fileList}*/}
+                                    {/*    previewFile={handlePreview}*/}
+                                    {/*    onChange={handleChange}*/}
+                                    {/*    name={"image"}*/}
+                                    {/*    beforeUpload={beforeUpload}*/}
+                                    {/*>*/}
+                                    {/*    {fileList.length >= 8 ? null : uploadButton}*/}
+                                    {/*</Upload>*/}
+                                    {/*<Upload*/}
+                                    {/*    action={`${CONSTANTS.UPLOAD}`}*/}
+                                    {/*    fileList={fileList}*/}
+                                    {/*    onChange={handleChange}*/}
+                                    {/*    name={"image"}*/}
+                                    {/*    beforeUpload={beforeUpload}*/}
+                                    {/*>*/}
+                                    {/*    <Button>*/}
+                                    {/*        <Icon type="upload" /> Click to Upload*/}
+                                    {/*    </Button>*/}
+                                    {/*</Upload>*/}
+
+                                    <Upload {...customprops}>
+                                        <Button>
+                                            <Icon type="upload"/> Click to Upload
+                                        </Button>
+                                    </Upload>
+                                    <Modal visible={previewVisible} footer={null} onCancel={handleCancel}>
+                                        <img alt="example" style={{width: '100%'}} src={previewImage}/>
+                                    </Modal>
+                                </div>
+                            </Col>
+                        </Row>
+
+                        <Row className={"pt-3"}>
+                            <Col>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    size="large"
+                                    className={classes.button}
+                                    startIcon={<SaveIcon/>}
+                                    onClick={(event) => {
+                                        handleSubmitAnnonce();
+                                    }}
+                                >
+                                    Save
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Paper>
+
+                    <Modal className={"p-0"} show={show} onHide={handleClose}>
+
+                        <Modal.Body>
+                            <SignUp></SignUp>
+                        </Modal.Body>
+
+                    </Modal>
+                </Container>
+
+            </form>}
+
+
+        </div>
     );
 
 

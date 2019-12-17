@@ -15,13 +15,13 @@ import {useCookies} from "react-cookie";
 
 const TopNav = (props) => {
     const [tokenCookie, setTokenCookie, removeTokenCookie] = useCookies(['token']);
-const logout=()=>{
-    removeTokenCookie("token");
-    removeTokenCookie("role");
+    const logout = () => {
+        removeTokenCookie("token");
+        removeTokenCookie("role");
 
-    window.location.reload();
+        window.location.reload();
 
-}
+    }
 
     return (
 
@@ -29,31 +29,34 @@ const logout=()=>{
         <div>
             <section id={"top-nav"}>
                 <Container fluid>
-                    <Row className={"justify-content-center align-items-center"}>
-                        <Col lg={{span: 7, offset: 5}} sm={12}>
-                            <Container>
-                                <Row className={"justify-content-center align-items-center"}>
-                                    <Col xs={4} lg={2} className={"text-center"}><MailOutlined
-                                        style={{color: '#c7081b'}}/> test@test.com</Col>
-                                    <Col xs={4} lg={2} className={"text-center"}><PhoneOutlined
-                                        style={{color: '#c7081b'}}/> 32145698</Col>
-                                    <Col xs={4} lg={2} className={"text-center"}><MapOutlined
-                                        style={{color: '#c7081b'}}/> france</Col>
-                                    {props.token.token  ?
-                                        <Col xs={12} lg={2} className={"text-right p-2"}> <Link to={'/dashboard'}
-                                                                                               >Dashboard</Link></Col> :""
-                                    }
+                    <Row className={"justify-content-end align-items-center p-1"}>
 
-                                    {props.token.token  ?
-                                        <Col xs={12} lg={2} className={"text-right p-2"}> <Link to={'#'}
-                                            onClick={logout}>Logout</Link></Col> :
-                                        <Col xs={12} lg={2} className={"text-right p-2"}> <Link
-                                            to="/signin">Login</Link></Col>
-                                    }
-                                </Row>
-                            </Container>
+                        <Col xs={12}>
+
+                            <Row className={"justify-content-center justify-content-lg-end align-items-center"}>
+                                <Col xs={12}  md={4} lg={3} className={"text-center text-lg-right"}><MailOutlined
+                                    style={{color: '#c7081b'}}/> contact@galerieauto.fr</Col>
+                                <Col xs={12} md={4} lg={2} className={"text-center text-lg-right"}><PhoneOutlined
+                                    style={{color: '#c7081b'}}/> 0176451125</Col>
+
+
+                            </Row>
+                            <Row className={"justify-content-end"}>
+                                {props.role > 1 ?
+                                    <Col xs={4} lg={2} className={"text-right p-2"}> <Link to={'/dashboard'}
+                                    >Dashboard</Link></Col> : ""
+                                }
+
+                                {props.token.token ?
+                                    <Col xs={4} lg={2} className={"text-right p-2"}> <Link to={'#'}
+                                                                                            onClick={logout}>Logout</Link></Col> :
+                                    <Col xs={4} lg={2} className={"text-right p-2"}> <Link
+                                        to="/signin">Login</Link></Col>
+                                }
+                            </Row>
 
                         </Col>
+
 
                     </Row>
 

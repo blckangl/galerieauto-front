@@ -65,6 +65,8 @@ const SignUp = () => {
     const [lastName, setLastName] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+
     const [isSignedUp, setIsSingnedUp] = useState(false);
     const HandleSignUp = () => {
 
@@ -76,12 +78,15 @@ const SignUp = () => {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            password: password
+            password: password,
+            phone:phone
         };
-        console.log(body);
         fetch(CONSTANTS.SIGNUP, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
             body: JSON.stringify(body)
         })
             .then(response => {
@@ -91,19 +96,18 @@ const SignUp = () => {
                 if (data.success) {
                     message.success("Done");
                     setIsSingnedUp(true);
-
-                    // window.location.reload();
                 } else {
-                    console.log("data", data.message);
                     for (let key in data.message) {
                         if (data.message.hasOwnProperty(key)) {
-                            message.error("Invalid or used "+key);
+                            message.error("Invalid or used " + key);
                         }
                     }
                     // message.error(data.message);
                 }
 
-            });
+            }).catch(err=>{
+                message.error(err.toString())
+        });
 
 
     }
@@ -161,6 +165,20 @@ const SignUp = () => {
                                 autoComplete="email"
                                 onChange={(e) => {
                                     setEmail(e.target.value);
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="phone"
+                                label="phone"
+                                name="phone"
+                                autoComplete="phone"
+                                onChange={(e) => {
+                                    setPhone(e.target.value);
                                 }}
                             />
                         </Grid>

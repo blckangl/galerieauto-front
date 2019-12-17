@@ -46,14 +46,11 @@ const StickyNav = (props) => {
                         <span className={"nav-link-container " + (props.path == "/acheteur" ? "active" : "")}> <Link
                             to="/acheteur">Acheteur</Link></span>
                         <span className={"nav-link-container " + (props.path == "/vendeur" ? "active" : "")}> <Link
-                            to="/vendeur">Vendeur</Link></span>
+                            to="/vendeur">Déposer mon annonce</Link></span>
 
                         <span className={"nav-link-container " + (props.path == "/contact" ? "active" : "")}> <Link
                             to="/contact">Contact</Link></span>
-                        <span className={"nav-link-container " + (props.path == "/condition_generales" ? "active" : "")}> <Link
-                            to="/condition_generales">Conditions générales</Link></span>
-                        <span className={"nav-link-container " + (props.path == "/condition_vente" ? "active" : "")}> <Link
-                            to="/condition_vente">Conditions de vente</Link></span>
+
 
 
                     </Nav>

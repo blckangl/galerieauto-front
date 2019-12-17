@@ -8,7 +8,7 @@ import Footer from "../../../components/footer";
 
 export default function DefaultLayout({children, path}) {
     const [tokenCookie, setTokenCookie, removeTokenCookie] = useCookies(['token']);
-    let hasPermission = false;
+    let hasPermission = 0;
     if (tokenCookie.role) {
         hasPermission = tokenCookie.role;
     }

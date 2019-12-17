@@ -16,16 +16,15 @@ const Home = (props) => {
     const [currentAnnonce, setCurrentAnnonces] = useState([]);
 
     const fetchVehicles = () => {
-        fetch(CONSTANTS.API_URL + "vehicles/read.php?last=8")
+        fetch(CONSTANTS.GET_ANNOUNCES+`?limit=8`)
             .then(response => {
                 return response.json();
             })
             .then(data => {
                 // let marquesFromApi =data.records.map(entry => entry)
+                if (data.success) {
 
-                if (data.records) {
-
-                    setCurrentAnnonces(data.records)
+                    setCurrentAnnonces(data.body)
                 } else {
                     setCurrentAnnonces([])
                 }
@@ -79,18 +78,18 @@ const Home = (props) => {
                         {currentAnnonce.map(entry => (
                             <Col
                                 className={"p-2"}
-                                key={entry.id}
+                                key={entry._id}
                                 xs={12} md={6} lg={3}
                             >
 
                                 <Announce
-                                    name={entry.name}
+                                    name={entry.title}
                                     type={entry.carburant}
                                     color={entry.color}
                                     chv={entry.chv}
                                     price={entry.price}
                                     img={entry.img_cover}
-                                    id={entry.id}
+                                    id={entry._id}
                                 />
 
 

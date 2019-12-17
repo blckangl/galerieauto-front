@@ -12,6 +12,7 @@ import {Contact} from '../pages/contact'
 import DashBoard from '../pages/dashboard';
 import {ConditionGeneral} from "../pages/condition_general";
 import {ConditionVente} from "../pages/condition_vente";
+import Announce from "../pages/announce";
 
 export default function Routes() {
     return (
@@ -22,6 +23,8 @@ export default function Routes() {
             <Route path="/contact" exact component={Contact} />
             <Route path="/condition_generales" exact component={ConditionGeneral} />
             <Route path="/condition_vente" exact component={ConditionVente} />
+            <Route path="/announce/:id" component={Announce} />
+
 
             <Route path="/vendeur" component={Vendeur}  />
 

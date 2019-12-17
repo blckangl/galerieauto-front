@@ -87,10 +87,7 @@ export default function SignInSide() {
         login();
     }
     const login = () => {
-        console.log(JSON.stringify({
-            "email": userName,
-            "password": password
-        }));
+
         fetch(CONSTANTS.LOGIN, {
             crossDomain: true,
             method: "POST",
@@ -104,14 +101,17 @@ export default function SignInSide() {
                 return response.json();
             })
             .then(data => {
-                console.log("data",data);
                 if (data.success) {
 
-                    setTokenCookie('token',data.jwt, { path: '/',maxAge:3600 * 5 });
-                    setTokenCookie('role',data.permission==1, { path: '/',maxAge:3600 * 5 });
-
+                    setTokenCookie('token',data.body.token, { path: '/',maxAge:3600 * 5 });
+                    if(data.body.role.includes('admin')){
+                        setTokenCookie('role',3, { path: '/',maxAge:3600 * 5 });
+                    }else  if(data.body.role.includes('agent')){
+                        setTokenCookie('role',2, { path: '/',maxAge:3600 * 5 });
+                    }else{
+                        setTokenCookie('role',1, { path: '/',maxAge:3600 * 5 });
+                    }
                     window.location.reload();
-
                 }
                 else{
                     message.error(data.message)

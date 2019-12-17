@@ -16,13 +16,13 @@ import {Announce} from '../../components'
 
 export default function Products() {
     const [currentTypes, setCurrentTypes] = useState([]);
-    const [selectedType, setSelectedType] = useState({name: '', id: 0});
+    const [selectedType, setSelectedType] = useState({title: '', _id: '0'});
 
     const [currentMarques, setCurrentMarquess] = useState([]);
-    const [selectedMarque, setSelectedMarque] = useState({name: '', id: 0});
+    const [selectedMarque, setSelectedMarque] = useState({title: '', _id: '0'});
 
     const [currentModels, setCurrentModels] = useState([]);
-    const [selectedModel, setSelectedModel] = useState({name: '', id: 0});
+    const [selectedModel, setSelectedModel] = useState({title: '', _id: '0'});
 
     const [currentAnnonces, setCurrentAnnonces] = useState([]);
 
@@ -31,12 +31,12 @@ export default function Products() {
     }, []);
 
     const fetChTypes = () => {
+
         fetch(CONSTANTS.GET_TYPES)
             .then(response => {
                 return response.json();
             })
             .then(data => {
-                console.log(data.body);
                 if (data.success) {
                     setCurrentTypes(data.body);
                 } else {
@@ -51,17 +51,17 @@ export default function Products() {
         if (id == 0) {
             return;
         }
-        setSelectedMarque({name: '', id: '0'});
+        setSelectedMarque({title: '', _id: '0'});
+        setCurrentMarquess([]);
+        setSelectedModel({title: '', _id: '0'});
         setCurrentModels([]);
-        fetch(CONSTANTS.API_URL + "marques/read.php?id=" + id)
+        fetch(CONSTANTS.GET_MARQUES + "?typeid=" + id)
             .then(response => {
                 return response.json();
             })
             .then(data => {
-
-                if (data.records) {
-
-                    setCurrentMarquess(data.records);
+                if (data.success) {
+                    setCurrentMarquess(data.body);
                 } else {
                     setCurrentMarquess([]);
 
@@ -77,15 +77,14 @@ export default function Products() {
         if (id == 0) {
             return;
         }
-        setSelectedModel({name: '', id: '0'});
 
-        fetch(CONSTANTS.API_URL + "models/read.php?id=" + id)
+        fetch(CONSTANTS.GET_MODELS + "?marqueid=" + id)
             .then(response => {
                 return response.json();
             })
             .then(data => {
-                if (data.records) {
-                    setCurrentModels(data.records);
+                if (data.success) {
+                    setCurrentModels(data.body);
                 } else {
                     setCurrentModels([]);
                 }
@@ -95,20 +94,20 @@ export default function Products() {
 
             });
     }
+
     const fetchVehicles = (typeid, markid, modelid) => {
         if (typeid == 0) {
             return;
         }
         fetch(
-            `${CONSTANTS.API_URL}vehicles/read.php?type_id=${typeid}&marque_id=${markid}&model_id=${modelid}`
+            `${CONSTANTS.GET_ANNOUNCES}${queryGenerator(typeid,markid,modelid)}`
         )
             .then(response => {
                 return response.json();
             })
             .then(data => {
-                console.log(data);
-                if (data.records) {
-                    setCurrentAnnonces(data.records);
+                if (data.success) {
+                    setCurrentAnnonces(data.body);
                 } else {
                     setCurrentAnnonces([]);
 
@@ -117,7 +116,6 @@ export default function Products() {
             .catch(error => {
             });
     }
-    console.log(currentTypes);
     return (
 
         <Container fluid style={{minHeight: '100vh'}}>
@@ -138,8 +136,8 @@ export default function Products() {
                                         onChange={(ev, value) => {
                                             if (value) {
                                                 setSelectedType(value);
-                                                fetchMarques(value.id);
-                                                fetchVehicles(value.id, selectedMarque.id, selectedModel.id);
+                                                fetchMarques(value._id);
+                                                fetchVehicles(value._id, 0, 0);
 
                                             }
                                         }}
@@ -157,16 +155,16 @@ export default function Products() {
                                     <Autocomplete
                                         id="combo-box-marques"
                                         options={currentMarques}
-                                        getOptionLabel={option => option.name}
+                                        getOptionLabel={option => option.title}
                                         value={selectedMarque}
                                         style={{width: '100%'}}
                                         disableClearable
-
+                                        autoComplete={false}
                                         onChange={(ev, val) => {
                                             if (val) {
                                                 setSelectedMarque(val);
-                                                fetchModels(val.id);
-                                                fetchVehicles(selectedType.id, val.id, selectedModel.id);
+                                                fetchModels(val._id);
+                                                fetchVehicles(selectedType._id, val._id, selectedModel._id);
 
                                             }
 
@@ -182,9 +180,9 @@ export default function Products() {
                             <Row className={"pt-3"}>
                                 <Col xs={12}>
                                     <Autocomplete
-                                        id="combo-box-marques"
+                                        id="combo-box-models"
                                         options={currentModels}
-                                        getOptionLabel={option => option.name}
+                                        getOptionLabel={option => option.title}
                                         value={selectedModel}
                                         style={{width: '100%'}}
                                         disableClearable
@@ -192,8 +190,7 @@ export default function Products() {
                                         onChange={(ev, val) => {
                                             if (val) {
                                                 setSelectedModel(val);
-                                                fetchVehicles(selectedType.id, selectedMarque.id, val.id);
-
+                                                fetchVehicles(selectedType._id, selectedMarque._id, val._id);
                                             }
                                         }}
                                         renderInput={params => (
@@ -209,29 +206,29 @@ export default function Products() {
                     </Card>
                 </Col>
                 <Col xs={12} md={6} lg={8}>
-                  <Container fluid>
-                      <Row style={{justifyContent:'center'}}>
-                          {currentAnnonces.length > 0 ? currentAnnonces.map(entry => (
-                              <div
-                                  key={entry.id}
-                                  className="col-lg-4 col-md-6 col-12 p-2 mx-auto"
-                              >
-                                  <Announce
-                                      name={entry.name}
-                                      type={entry.carburant}
-                                      color={entry.color}
-                                      chv={entry.chv}
-                                      price={entry.price}
-                                      img={entry.img_cover}
-                                      id={entry.id}
-                                  />
-                              </div>
-                          )) : <Result
-                              icon={<Icon type="smile" theme="twoTone"/>}
-                              title="No annonces for this category"
-                          />}
-                      </Row>
-                  </Container>
+                    <Container fluid>
+                        <Row style={{justifyContent: 'center'}}>
+                            {currentAnnonces.length > 0 ? currentAnnonces.map(entry => (
+                                <div
+                                    key={entry._id}
+                                    className="col-lg-4 col-md-6 col-12 p-2 mx-auto"
+                                >
+                                    <Announce
+                                        name={entry.title}
+                                        type={entry.carburant}
+                                        color={entry.color}
+                                        chv={entry.chv}
+                                        price={entry.price}
+                                        img={entry.img_cover}
+                                        id={entry._id}
+                                    />
+                                </div>
+                            )) : <Result
+                                icon={<Icon type="smile" theme="twoTone"/>}
+                                title="No annonces for this category"
+                            />}
+                        </Row>
+                    </Container>
                 </Col>
 
             </Row>
@@ -240,3 +237,23 @@ export default function Products() {
 };
 
 
+function queryGenerator(type,marque,model) {
+    let query="?"
+    if(type){
+        if(type!=0){
+            query+="typeid="+type;
+        }
+    }
+    if(marque){
+        if(marque!=0){
+            query+="&marqueid="+marque;
+        }
+    }
+    if(model){
+        if(model!=0){
+            query+="&modelid="+model;
+        }
+    }
+
+    return query;
+}

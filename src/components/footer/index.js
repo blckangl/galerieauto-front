@@ -1,5 +1,5 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faPhone,
     faEnvelope,
@@ -8,9 +8,14 @@ import {
 import './style.css';
 import * as logowhite from '../../assets/logowhitefooter.png';
 import * as footercar from '../../assets/footercar.png';
+import * as mastercard from '../../assets/mastercard.png';
+import * as visa from '../../assets/visa.png'
+import {Link} from "react-router-dom";
+import Nav from "react-bootstrap/Nav";
+
 const Footer = () => (
     <div>
-        <section id="footer" style={{backgroundImage:`url('${footercar}')`}}>
+        <section id="footer" style={{backgroundImage: `url('${footercar}')`}}>
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-lg-4 col-md-6 col-12  d-flex align-items-center">
@@ -38,28 +43,28 @@ const Footer = () => (
                                 <h3 className="desc">Contact</h3>
                             </div>
                             <div className="col-2 mt-1 text-left">
-                                <FontAwesomeIcon icon={faPhone} style={{ width: 20 + "px" }} />
+                                <FontAwesomeIcon icon={faPhone} style={{width: 20 + "px"}}/>
                             </div>
                             <div className="col-10 mt-1 d-flex align-items-end">
-                                +xxxxxxxxx
+                                0176451125
                             </div>
                             <div className="col-2 mt-1 text-left">
                                 <FontAwesomeIcon
                                     icon={faEnvelope}
-                                    style={{ width: 20 + "px" }}
+                                    style={{width: 20 + "px"}}
                                 />
                             </div>
                             <div className="col-10 mt-1 d-flex align-items-end">
-                                contact@elite.com
+                                contact@galerieauto.fr
                             </div>
                             <div className="col-2 mt-1 text-left">
                                 <FontAwesomeIcon
                                     icon={faMapMarkerAlt}
-                                    style={{ width: 20 + "px" }}
+                                    style={{width: 20 + "px"}}
                                 />
                             </div>
                             <div className="col-10 mt-1 d-flex align-items-end">
-                                xxxx 2050 country{" "}
+                                10 rue de penthievre 75008 paris{" "}
                             </div>
                         </div>
                     </div>
@@ -72,7 +77,7 @@ const Footer = () => (
                                         width="600"
                                         height="450"
                                         frameBorder="0"
-                                        style={{ border: 0 }}
+                                        style={{border: 0}}
                                         allowFullScreen
                                     />
                                 </div>
@@ -80,10 +85,35 @@ const Footer = () => (
                         </div>
                     </div>
                 </div>
+
+
             </div>
         </section>
 
+        <section>
+            <div className="container-fluid">
 
+                <div className="row justify-content-center">
+                    <div className="col-2 text-center p-1">
+                        <img className={"m-1"} width={40} src={visa} alt=""/>
+                        <img className={"m-1"} width={40} src={mastercard} alt=""/>
+                    </div>
+                </div>
+                <div style={{backgroundColor: 'black'}} className="row justify-content-center">
+                    <div className="col-12 col-md-3 col-lg-1 text-center p-1 mt-1">
+                        <span className={"nav-link-container"}> <Link
+                            to="/condition_generales">Conditions générales</Link></span>
+                    </div>
+                    <div className="col-12 col-md-3 col-lg-1 text-center p-1">
+
+                <span className={"nav-link-container "}> <Link
+                    to="/condition_vente#condition-vente">Conditions de vente</Link></span>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
     </div>
 );
 
