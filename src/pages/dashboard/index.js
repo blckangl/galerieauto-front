@@ -504,7 +504,7 @@ export default function DashBoard() {
                                     <div className={"text-center"}><Chip label={selectedType.title}
                                                                          variant="outlined"/></div>
                                     <form className={"d-flex justify-content-center"} noValidate autoComplete="off">
-                                        <TextField id="standard-basic" label="Standard"
+                                        <TextField id="standard-basic" label="Marque"
                                                    disabled={selectedType._id == -1} onChange={(e) => {
                                             setNewMaruqe(e.target.value);
                                         }}/>
@@ -560,7 +560,7 @@ export default function DashBoard() {
                                                                          variant="outlined"/></div>
                                     <form className={"d-flex justify-content-center"} noValidate autoComplete="off">
                                         <TextField id="standard-basic" disabled={selectedMarque._id == -1}
-                                                   label="Standard" onChange={(e) => {
+                                                   label="Modèle" onChange={(e) => {
                                             setNewModel(e.target.value);
                                         }}/>
                                         <Fab size="small" color="secondary" aria-label="add" disabled={isLoading}

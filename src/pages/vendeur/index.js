@@ -409,7 +409,7 @@ export default function Vendeur() {
                                     <input
                                         type="radio"
                                         name="type"
-                                        value="5de5b2997bb16705d7dd50c3"
+                                        value="5e1c39ce4581ad51c71345f5"
                                         onChange={handleTypeChange}
                                     />
                                     <span className="checkmark"></span>
@@ -422,7 +422,7 @@ export default function Vendeur() {
                                     <input
                                         type="radio"
                                         name="type"
-                                        value="5de5b28e7bb16705d7dd50c2"
+                                        value="5e1c39d44581ad51c71345f6"
                                         onChange={handleTypeChange}
                                     />
                                     <span className="checkmark"></span>
@@ -435,7 +435,7 @@ export default function Vendeur() {
                                     <input
                                         type="radio"
                                         name="type"
-                                        value="5de5b21f7bb16705d7dd50c0"
+                                        value="5e1c2e92ef85847aeccd70f0"
                                         onChange={handleTypeChange}
 
                                     />
@@ -452,7 +452,7 @@ export default function Vendeur() {
                                     <input
                                         type="radio"
                                         name="type"
-                                        value="5de5b2727bb16705d7dd50c1"
+                                        value="5e1c39ee4581ad51c71345f7"
                                         onChange={handleTypeChange}
                                     />
                                     <span className="checkmark"/>
