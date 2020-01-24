@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import './style.css';
-import {Layout, Menu, Breadcrumb, Icon, Card, Meta, Result} from 'antd';
+import { Layout, Menu, Breadcrumb, Icon, Card, Meta, Result } from 'antd';
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {Announce} from "../../components/annonce";
+import { Announce } from "../../components/annonce";
 import * as CONSTANTS from "../../shared/constants";
-import {message} from 'antd';
-import {useCookies} from "react-cookie";
+import { message } from 'antd';
+import { useCookies } from "react-cookie";
 import CardContent from "@material-ui/core/CardContent";
 import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
@@ -24,7 +24,7 @@ import History from '@material-ui/icons/History';
 
 import CardHeader from "@material-ui/core/CardHeader";
 import Modal from "react-bootstrap/Modal";
-import {SignUp} from "../../components/sign-up";
+import { SignUp } from "../../components/sign-up";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -39,10 +39,10 @@ import TextField from "@material-ui/core/TextField";
 import Fab from "@material-ui/core/Fab";
 import Spinner from "react-bootstrap/Spinner";
 
-const {Header, Content, Footer, Sider} = Layout;
+const { Header, Content, Footer, Sider } = Layout;
 
 
-export default function DashBoard() {
+const DashBoard = () => {
     const [tokenCookie, setTokenCookie, removeTokenCookie] = useCookies(['token']);
     const [roleCookie, setRoleCookie, removeRoleCookie] = useCookies(['role']);
     const [show, setShow] = useState(false);
@@ -67,12 +67,12 @@ export default function DashBoard() {
     };
     const [currentAnnonce, setCurrentAnnonces] = useState([]);
     const [usersList, setUsersList] = useState([]);
-    const [selectedType, setSelectedType] = useState({_id: -1, title: ""});
+    const [selectedType, setSelectedType] = useState({ _id: -1, title: "" });
     const [currentTypes, setCurrentTypes] = useState([]);
-    const [selectedMarque, setSelectedMarque] = useState({_id: -1, title: ""});
+    const [selectedMarque, setSelectedMarque] = useState({ _id: -1, title: "" });
     const [currentMarques, setCurrentMarques] = useState([]);
 
-    const [selectedModel, setSelectedModel] = useState({_id: -1, title: ""});
+    const [selectedModel, setSelectedModel] = useState({ _id: -1, title: "" });
     const [currentModels, setCurrentModels] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [newMaruqe, setNewMaruqe] = useState("");
@@ -137,7 +137,7 @@ export default function DashBoard() {
 
         fetch(CONSTANTS.SET_USER_ROLE, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 "id": selectedUserId,
                 "role": role
@@ -220,40 +220,40 @@ export default function DashBoard() {
         fetchTypes();
     }, []);
     return (
-        <Layout style={{minHeight: '100vh'}}>
+        <Layout style={{ minHeight: '100vh' }}>
             <Sider collapsible collapsed={isCollpased} onCollapse={onCollapse}>
-                <div className="logo"/>
+                <div className="logo" />
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
                     <Menu.Item key="1" onClick={() => {
                         setCurrentPage("home")
                     }}>
-                        <Icon type="pie-chart"/>
+                        <Icon type="pie-chart" />
                         <span>Annonces</span>
                     </Menu.Item>
                     <Menu.Item key="2" onClick={() => {
                         setCurrentPage("users")
                     }}>
-                        <Icon type="user"/>
+                        <Icon type="user" />
                         <span>Users</span>
                     </Menu.Item>
                     <Menu.Item key="3" onClick={() => {
                         setCurrentPage("models")
                     }}>
-                        <Icon type="user"/>
+                        <Icon type="user" />
                         <span>Marques & Models</span>
                     </Menu.Item>
                 </Menu>
             </Sider>
             {isLoading ?
 
-                    <div className={"text-center p-3"}><Spinner animation="border" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </Spinner></div>
+                <div className={"text-center p-3"}><Spinner animation="border" role="status">
+                    <span className="sr-only">Loading...</span>
+                </Spinner></div>
 
                 : ""}
             {currentPage == "home" ? <Layout>
-                <Content style={{margin: '16px 16px'}}>
-                    <Breadcrumb style={{margin: '16px 0'}}>
+                <Content style={{ margin: '16px 16px' }}>
+                    <Breadcrumb style={{ margin: '16px 0' }}>
                         <Breadcrumb.Item>dashboard</Breadcrumb.Item>
                         <Breadcrumb.Item>annonces</Breadcrumb.Item>
 
@@ -271,7 +271,7 @@ export default function DashBoard() {
                                     xs={12} md={6} lg={4}
                                 >
                                     <Card
-                                        style={{width: '100%'}}
+                                        style={{ width: '100%' }}
 
                                         actions={[
                                             <Icon onClick={() => {
@@ -279,7 +279,7 @@ export default function DashBoard() {
                                                 fetch(CONSTANTS.CONFIRME_ANNOUNCES, {
                                                     crossDomain: true,
                                                     method: "POST",
-                                                    headers: {"Content-Type": "application/json"},
+                                                    headers: { "Content-Type": "application/json" },
                                                     body: JSON.stringify({
                                                         "announceid": entry._id,
 
@@ -303,7 +303,7 @@ export default function DashBoard() {
                                                         message.error("Erreur");
                                                     });
 
-                                            }} type="file-add" key="file-add"/>,
+                                            }} type="file-add" key="file-add" />,
                                         ]}
                                     >
                                         <Announce
@@ -320,20 +320,20 @@ export default function DashBoard() {
 
                                 </Col>
                             )) : <Result
-                                icon={<Icon type="smile" theme="twoTone"/>}
-                                title="Great, we have done all the operations!"
-                            />}
+                                    icon={<Icon type="smile" theme="twoTone" />}
+                                    title="Great, we have done all the operations!"
+                                />}
 
 
                         </Row>
                     </Container>
 
                 </Content>
-                <Footer style={{textAlign: 'center'}}></Footer>
+                <Footer style={{ textAlign: 'center' }}></Footer>
             </Layout> : ""}
             {(currentPage == "users" && roleCookie.role >= 2) ? <Layout>
-                <Content style={{margin: '16px 16px'}}>
-                    <Breadcrumb style={{margin: '16px 0'}}>
+                <Content style={{ margin: '16px 16px' }}>
+                    <Breadcrumb style={{ margin: '16px 0' }}>
                         <Breadcrumb.Item>dashboard</Breadcrumb.Item>
                         <Breadcrumb.Item>users</Breadcrumb.Item>
 
@@ -359,37 +359,37 @@ export default function DashBoard() {
 
                                         <CardContent>
                                             <p>Details</p>
-                                            <Divider/>
+                                            <Divider />
                                             <List component="nav" aria-label="main mailbox folders">
 
                                                 <ListItem key={"phone"}>
                                                     <ListItemIcon>
-                                                        <PhoneIcon/>
+                                                        <PhoneIcon />
                                                     </ListItemIcon>
-                                                    <ListItemText primary={entry.phone}/>
+                                                    <ListItemText primary={entry.phone} />
                                                 </ListItem>
                                                 <ListItem key={entry._role[entry._role.length - 1]}>
                                                     <ListItemIcon>
-                                                        <PersonIcon/>
+                                                        <PersonIcon />
                                                     </ListItemIcon>
-                                                    <ListItemText primary={entry._role[entry._role.length - 1]}/>
+                                                    <ListItemText primary={entry._role[entry._role.length - 1]} />
 
                                                 </ListItem>
 
 
                                             </List>
-                                            <Divider/>
+                                            <Divider />
 
 
                                         </CardContent>
                                         <CardActions disableSpacing>
                                             {roleCookie.role == 3 ?
                                                 <IconButton aria-controls="simple-menu" aria-haspopup="true"
-                                                            onClick={(event) => {
-                                                                setSelectedUserId(entry._id);
-                                                                handleMenuClick(event);
-                                                            }}>
-                                                    <PermIdentity/>
+                                                    onClick={(event) => {
+                                                        setSelectedUserId(entry._id);
+                                                        handleMenuClick(event);
+                                                    }}>
+                                                    <PermIdentity />
                                                 </IconButton> : ""}
 
                                             <IconButton aria-label="share" onClick={() => {
@@ -397,37 +397,37 @@ export default function DashBoard() {
                                                 fetchAnnoncesForUser(entry._id);
                                                 handleShow();
                                             }}>
-                                                <History/>
+                                                <History />
                                             </IconButton>
 
                                             {roleCookie.role == 3 ?
                                                 <IconButton aria-controls="simple-menu" aria-haspopup="true"
-                                                            onClick={(event) => {
-                                                                fetch(CONSTANTS.DELETE_USER, {
-                                                                    method: "DELETE",
-                                                                    headers: {
-                                                                        'Content-Type': 'application/json',
-                                                                        'Accept': 'application/json',
-                                                                        'Authorization': `Bearer ${tokenCookie.token}`
-                                                                    },
-                                                                    body: JSON.stringify({userid:entry._id}),
-                                                                })
-                                                                    .then(response => {
-                                                                        return response.json();
-                                                                    })
-                                                                    .then(data => {
-                                                                        if (data.success) {
-                                                                            message.success("Done ");
-                                                                            fetchUsers();
-                                                                        } else {
-                                                                            message.error(data.message);
-                                                                        }
-                                                                    })
-                                                                    .catch(error => {
-                                                                        message.error(error);
-                                                                    });
-                                                            }}>
-                                                    <DeleteIcon/>
+                                                    onClick={(event) => {
+                                                        fetch(CONSTANTS.DELETE_USER, {
+                                                            method: "DELETE",
+                                                            headers: {
+                                                                'Content-Type': 'application/json',
+                                                                'Accept': 'application/json',
+                                                                'Authorization': `Bearer ${tokenCookie.token}`
+                                                            },
+                                                            body: JSON.stringify({ userid: entry._id }),
+                                                        })
+                                                            .then(response => {
+                                                                return response.json();
+                                                            })
+                                                            .then(data => {
+                                                                if (data.success) {
+                                                                    message.success("Done ");
+                                                                    fetchUsers();
+                                                                } else {
+                                                                    message.error(data.message);
+                                                                }
+                                                            })
+                                                            .catch(error => {
+                                                                message.error(error);
+                                                            });
+                                                    }}>
+                                                    <DeleteIcon />
                                                 </IconButton> : ""}
 
                                         </CardActions>
@@ -437,9 +437,9 @@ export default function DashBoard() {
 
                                 </Col>
                             )) : <Result
-                                icon={<Icon type="smile" theme="twoTone"/>}
-                                title="Great, we have done all the operations!"
-                            />}
+                                    icon={<Icon type="smile" theme="twoTone" />}
+                                    title="Great, we have done all the operations!"
+                                />}
 
 
                             <MenuMAT
@@ -466,11 +466,11 @@ export default function DashBoard() {
                     </Container>
 
                 </Content>
-                <Footer style={{textAlign: 'center'}}></Footer>
+                <Footer style={{ textAlign: 'center' }}></Footer>
             </Layout> : ""}
             {(currentPage == "models" && roleCookie.role >= 2) ? <Layout>
-                <Content style={{margin: '16px 16px'}}>
-                    <Breadcrumb style={{margin: '16px 0'}}>
+                <Content style={{ margin: '16px 16px' }}>
+                    <Breadcrumb style={{ margin: '16px 0' }}>
                         <Breadcrumb.Item>dashboard</Breadcrumb.Item>
                         <Breadcrumb.Item>marques & models</Breadcrumb.Item>
 
@@ -487,12 +487,12 @@ export default function DashBoard() {
                                         {currentTypes.map((x) =>
                                             (<ListItem key={x._id} button onClick={() => {
                                                 setSelectedType(x);
-                                                setSelectedModel({_id: -1, title: ""});
-                                                setSelectedMarque({_id: -1, title: ""});
+                                                setSelectedModel({ _id: -1, title: "" });
+                                                setSelectedMarque({ _id: -1, title: "" });
                                                 fetchMarques(x._id);
                                                 fetchModels(-1)
                                             }}>
-                                                <ListItemText primary={x.title}/>
+                                                <ListItemText primary={x.title} />
                                             </ListItem>)
                                         )}
 
@@ -502,52 +502,52 @@ export default function DashBoard() {
                             <Col xs={12} lg={4}>
                                 <Paper className={"p-2"}>
                                     <div className={"text-center"}><Chip label={selectedType.title}
-                                                                         variant="outlined"/></div>
+                                        variant="outlined" /></div>
                                     <form className={"d-flex justify-content-center"} noValidate autoComplete="off">
                                         <TextField id="standard-basic" label="Marque"
-                                                   disabled={selectedType._id == -1} onChange={(e) => {
-                                            setNewMaruqe(e.target.value);
-                                        }}/>
+                                            disabled={selectedType._id == -1} onChange={(e) => {
+                                                setNewMaruqe(e.target.value);
+                                            }} />
                                         <Fab size="small" color="secondary" aria-label="add" disabled={isLoading}
-                                             onClick={() => {
-                                                 setIsLoading(true);
-                                                 let body = {
-                                                     type_id: selectedType._id,
-                                                     title: newMaruqe
-                                                 }
-                                                 fetch(CONSTANTS.POST_MARQUES, {
-                                                     method: "POST",
-                                                     headers: {
-                                                         'Content-Type': 'application/json',
-                                                         'Accept': 'application/json',
-                                                         'Authorization': `Bearer ${tokenCookie.token}`
-                                                     },
-                                                     body: JSON.stringify(body),
-                                                 }).then(response => {
-                                                     return response.json();
-                                                 }).then(result => {
-                                                     setIsLoading(false);
+                                            onClick={() => {
+                                                setIsLoading(true);
+                                                let body = {
+                                                    type_id: selectedType._id,
+                                                    title: newMaruqe
+                                                }
+                                                fetch(CONSTANTS.POST_MARQUES, {
+                                                    method: "POST",
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Accept': 'application/json',
+                                                        'Authorization': `Bearer ${tokenCookie.token}`
+                                                    },
+                                                    body: JSON.stringify(body),
+                                                }).then(response => {
+                                                    return response.json();
+                                                }).then(result => {
+                                                    setIsLoading(false);
 
-                                                     if (result.success) {
-                                                         message.success("Done");
-                                                         fetchMarques(selectedType._id);
-                                                     } else {
-                                                         message.error("Fail");
-                                                     }
-                                                 })
-                                             }}>
-                                            <AddIcon/>
+                                                    if (result.success) {
+                                                        message.success("Done");
+                                                        fetchMarques(selectedType._id);
+                                                    } else {
+                                                        message.error("Fail");
+                                                    }
+                                                })
+                                            }}>
+                                            <AddIcon />
                                         </Fab>
                                     </form>
                                     <List component="nav" aria-label="secondary mailbox folders">
                                         {currentMarques.map((x) =>
                                             (<ListItem key={x._id} button onClick={() => {
                                                 setSelectedMarque(x);
-                                                setSelectedModel({_id: -1, title: ""});
+                                                setSelectedModel({ _id: -1, title: "" });
 
                                                 fetchModels(x._id);
                                             }}>
-                                                <ListItemText primary={x.title}/>
+                                                <ListItemText primary={x.title} />
                                             </ListItem>)
                                         )}
                                     </List>
@@ -557,41 +557,41 @@ export default function DashBoard() {
                             <Col xs={12} lg={4}>
                                 <Paper className={"p-2"}>
                                     <div className={"text-center"}><Chip label={selectedMarque.title}
-                                                                         variant="outlined"/></div>
+                                        variant="outlined" /></div>
                                     <form className={"d-flex justify-content-center"} noValidate autoComplete="off">
                                         <TextField id="standard-basic" disabled={selectedMarque._id == -1}
-                                                   label="Modèle" onChange={(e) => {
-                                            setNewModel(e.target.value);
-                                        }}/>
+                                            label="Modèle" onChange={(e) => {
+                                                setNewModel(e.target.value);
+                                            }} />
                                         <Fab size="small" color="secondary" aria-label="add" disabled={isLoading}
-                                             onClick={() => {
-                                                 setIsLoading(true);
-                                                 let body = {
-                                                     marque_id: selectedMarque._id,
-                                                     title: newModel
-                                                 }
-                                                 fetch(CONSTANTS.POST_MODELS, {
-                                                     method: "POST",
-                                                     headers: {
-                                                         'Content-Type': 'application/json',
-                                                         'Accept': 'application/json',
-                                                         'Authorization': `Bearer ${tokenCookie.token}`
-                                                     },
-                                                     body: JSON.stringify(body),
-                                                 }).then(response => {
-                                                     return response.json();
-                                                 }).then(result => {
-                                                     setIsLoading(false);
+                                            onClick={() => {
+                                                setIsLoading(true);
+                                                let body = {
+                                                    marque_id: selectedMarque._id,
+                                                    title: newModel
+                                                }
+                                                fetch(CONSTANTS.POST_MODELS, {
+                                                    method: "POST",
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Accept': 'application/json',
+                                                        'Authorization': `Bearer ${tokenCookie.token}`
+                                                    },
+                                                    body: JSON.stringify(body),
+                                                }).then(response => {
+                                                    return response.json();
+                                                }).then(result => {
+                                                    setIsLoading(false);
 
-                                                     if (result.success) {
-                                                         message.success("Done");
-                                                         fetchModels(selectedMarque._id);
-                                                     } else {
-                                                         message.error("Fail");
-                                                     }
-                                                 })
-                                             }}>
-                                            <AddIcon/>
+                                                    if (result.success) {
+                                                        message.success("Done");
+                                                        fetchModels(selectedMarque._id);
+                                                    } else {
+                                                        message.error("Fail");
+                                                    }
+                                                })
+                                            }}>
+                                            <AddIcon />
                                         </Fab>
                                     </form>
                                     <List component="nav" aria-label="secondary mailbox folders">
@@ -599,7 +599,7 @@ export default function DashBoard() {
                                             (<ListItem key={x._id} button onClick={() => {
                                                 setSelectedModel(x);
                                             }}>
-                                                <ListItemText primary={x.title}/>
+                                                <ListItemText primary={x.title} />
                                             </ListItem>)
                                         )}
                                     </List>
@@ -611,11 +611,11 @@ export default function DashBoard() {
                     </Container>
 
                 </Content>
-                <Footer style={{textAlign: 'center'}}></Footer>
+                <Footer style={{ textAlign: 'center' }}></Footer>
             </Layout> : ""}
 
 
-            <Modal style={{maxWidth: '90% !important'}} className={"p-0 historyModal"} show={show} onHide={handleClose}>
+            <Modal style={{ maxWidth: '90% !important' }} className={"p-0 historyModal"} show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>History</Modal.Title>
                 </Modal.Header>
@@ -632,7 +632,7 @@ export default function DashBoard() {
                                     xs={12} md={6} lg={4}
                                 >
                                     <Card
-                                        style={{width: '100%'}}
+                                        style={{ width: '100%' }}
 
                                         actions={[
                                             <Icon spin={true} onClick={() => {
@@ -644,7 +644,7 @@ export default function DashBoard() {
                                                 fetch(CONSTANTS.CONFIRME_ANNOUNCES, {
                                                     crossDomain: true,
                                                     method: "POST",
-                                                    headers: {"Content-Type": "application/json"},
+                                                    headers: { "Content-Type": "application/json" },
                                                     body: JSON.stringify({
                                                         "announceid": entry._id,
 
@@ -672,7 +672,7 @@ export default function DashBoard() {
 
                                                     });
 
-                                            }} type="file-add" key="file-add"/>,
+                                            }} type="file-add" key="file-add" />,
                                         ]}
                                     >
                                         <Announce
@@ -690,8 +690,8 @@ export default function DashBoard() {
                                 </Col>
                             )) : <Result
 
-                                title="No post for this user"
-                            />}
+                                    title="No post for this user"
+                                />}
 
 
                         </Row>
@@ -705,5 +705,5 @@ export default function DashBoard() {
 }
 
 
-
+export default DashBoard
 

@@ -9,3 +9,7 @@ a{
     color: white;
     text-decoration: none;
 }
+#top-nav a:hover{
+    color:#c7081b !important;
+    /* text-decoration: none; */
+}
