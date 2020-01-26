@@ -38,6 +38,7 @@ import Chip from "@material-ui/core/Chip";
 import TextField from "@material-ui/core/TextField";
 import Fab from "@material-ui/core/Fab";
 import Spinner from "react-bootstrap/Spinner";
+import Mailing from './Mailing';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -241,6 +242,12 @@ const DashBoard = () => {
                     }}>
                         <Icon type="user" />
                         <span>Marques & Models</span>
+                    </Menu.Item>
+                    <Menu.Item key="4" onClick={() => {
+                        setCurrentPage("mails")
+                    }}>
+                        <Icon type="mail" />
+                        <span>Mail</span>
                     </Menu.Item>
                 </Menu>
             </Sider>
@@ -613,6 +620,17 @@ const DashBoard = () => {
                 </Content>
                 <Footer style={{ textAlign: 'center' }}></Footer>
             </Layout> : ""}
+
+
+
+
+
+            {/* Mailing parts*/}
+
+            {currentPage == "mails" && <Mailing />}
+
+
+
 
 
             <Modal style={{ maxWidth: '90% !important' }} className={"p-0 historyModal"} show={show} onHide={handleClose}>
