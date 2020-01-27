@@ -1,6 +1,6 @@
 // const API_URL="https://api.crakenagency.space/";
-const API_URL = "https://api.crakenagency.com/";
-// const API_URL = "http://localhost:8080/";
+// const API_URL = "https://api.crakenagency.com/";
+const API_URL = "http://localhost:8080/";
 //
 
 const PUBLIC_UPLOAD_FOLDER_URL = API_URL+"public/uploads/";
@@ -14,6 +14,7 @@ const SET_USER_ROLE = API_URL + "users/setrole";
 
 const POST_MARQUES = API_URL + "api/marques/add";
 const POST_MODELS = API_URL + "api/models/add";
+const MAILING = API_URL + "api/mailing/mail/";
 
 const POST_ANNOUNCES = API_URL + "api/announce/add";
 const CONFIRME_ANNOUNCES = API_URL + "api/announce/confirme";
@@ -26,4 +27,4 @@ const LOGIN = API_URL + "users/signin";
 const SIGNUP = API_URL + "users/signup";
 const UPLOAD =API_URL+"api/upload";
 const USERS_LIST_URL=API_URL+"api/users/get";
-export {API_URL,DELETE_ANNOUNCE,DELETE_USER,SET_USER_ROLE,POST_MODELS,PUBLIC_UPLOAD_FOLDER_URL,POST_MARQUES,GET_TYPES,GET_MARQUES,GET_MODELS,GET_ANNOUNCES,GET_UNCONFIRMED_ANNOUNCES,POST_ANNOUNCES,CONFIRME_ANNOUNCES,LOGIN,SIGNUP,UPLOAD,USERS_LIST_URL,GET_ANNOUNCES_user};
+export {API_URL,DELETE_ANNOUNCE,DELETE_USER,SET_USER_ROLE,POST_MODELS,PUBLIC_UPLOAD_FOLDER_URL,POST_MARQUES,GET_TYPES,GET_MARQUES,GET_MODELS,GET_ANNOUNCES,GET_UNCONFIRMED_ANNOUNCES,POST_ANNOUNCES,CONFIRME_ANNOUNCES,LOGIN,SIGNUP,UPLOAD,USERS_LIST_URL,GET_ANNOUNCES_user,MAILING};

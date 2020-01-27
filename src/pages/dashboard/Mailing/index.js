@@ -10,6 +10,7 @@ import { Layout, Breadcrumb } from 'antd';
 import SendIcon from '@material-ui/icons/Send';
 import Button from "@material-ui/core/Button";
 import { message } from 'antd';
+import * as CONSTANTS from "../../../shared/constants";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -25,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 const Mailing = () => {
     const { Content } = Layout;
     const classes = useStyles();
-    const [mailType, setMailType] = useState(false);
+    const [mailType, setMailType] = useState(0);
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [fName, setfName] = useState("");
@@ -41,6 +42,7 @@ const Mailing = () => {
     // VALUES
     const handleMailType = event => {
         setMailType(event.target.value);
+        console.log(event.target.value);
     };
     const handleMailValue = event => {
         setEmail(event.target.value);
@@ -89,8 +91,33 @@ const Mailing = () => {
             message.error("cannot send")
             console.log("error", isError)
         } else {
-            message.success("sent")
-            console.log("no error", isError)
+            fetch(CONSTANTS.MAILING  + mailType, {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },  body: JSON.stringify({firstName:name,lastName:fName,email:email,password:email}) })
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+
+                    if (data.success) {
+
+                        message.success("sent")
+                    } else {
+                       message.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    message.error(error);
+
+                });
+
+
         }
     }
 
@@ -110,7 +137,7 @@ const Mailing = () => {
                                     <input
                                         type="radio"
                                         name="type"
-                                        value="welcomeMail"
+                                        value="0"
                                         onChange={handleMailType}
                                     />
                                     <span className="checkmark"></span>
@@ -122,7 +149,7 @@ const Mailing = () => {
                                     <input
                                         type="radio"
                                         name="type"
-                                        value="confirmationMail"
+                                        value="1"
                                         onChange={handleMailType}
                                     />
                                     <span className="checkmark"></span>
@@ -134,7 +161,7 @@ const Mailing = () => {
                                     <input
                                         type="radio"
                                         name="type"
-                                        value="otherMail"
+                                        value="2"
                                         onChange={handleMailType}
                                     />
                                     <span className="checkmark"></span>
